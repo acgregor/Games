@@ -1346,7 +1346,7 @@ public class FractalView
 						g.setColor(RainbowArray[rainbowIndex2]);
 						g.drawLine(fractArray2.get(index2), fractArray2.get(index2+1), fractArray2.get(index2+2), fractArray2.get(index2+3));
 						index2+=2;
-						if(rainbowIndex2<359 && index2%4==0)
+						if(rainbowIndex2<359 && index2%12==0)
 						{
 							rainbowIndex2++;
 						}
@@ -1379,7 +1379,7 @@ public class FractalView
 						g.setColor(RainbowArray[rainbowIndex3]);
 						g.drawLine(fractArray3.get(index3), fractArray3.get(index3+1), fractArray3.get(index3+2), fractArray3.get(index3+3));
 						index3+=2;
-						if(rainbowIndex3<359 && index3%4==0)
+						if(rainbowIndex3<359 && index3%12==0)
 						{
 							rainbowIndex3++;
 						}
@@ -1412,7 +1412,7 @@ public class FractalView
 						g.setColor(RainbowArray[rainbowIndex4]);
 						g.drawLine(fractArray4.get(index4), fractArray4.get(index4+1), fractArray4.get(index4+2), fractArray4.get(index4+3));
 						index4+=2;
-						if(rainbowIndex4<359 && index4%4==0)
+						if(rainbowIndex4<359 && index4%12==0)
 						{
 							rainbowIndex4++;
 						}
