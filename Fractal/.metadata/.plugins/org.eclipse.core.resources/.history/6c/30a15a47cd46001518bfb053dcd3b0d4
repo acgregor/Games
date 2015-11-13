@@ -1,0 +1,206 @@
+package contents;
+
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.util.ArrayList;
+
+public class FractalModel
+{
+	private boolean bgWarning,fractWarning,lineWarning;
+	private int iterationNumber;
+	private ArrayList<Integer> arr1;
+	private int lineLength;
+	public FractalModel()
+	{
+		bgWarning=false;
+		fractWarning=false;
+		lineWarning=false;
+		
+		iterationNumber=1;
+		
+		
+	}
+	
+	public void CalculateArray() 
+	{
+		int size=arr1.size();
+		int pivotX1=arr1.get(arr1.size()-2);
+		int pivotY1=arr1.get(arr1.size()-1);
+		for(int i=size-3;i>=0;i-=2)
+		{
+			int y1=arr1.get(i);
+			int x1=arr1.get(i-1);
+			x1=x1-pivotX1;
+			y1=y1-pivotY1;
+			int temp=x1;
+			x1=y1;
+			y1=-temp;
+			x1=x1+pivotX1;
+			y1=y1+pivotY1;
+			arr1.add(x1);
+			arr1.add(y1);
+		}
+		System.out.println(arr1.size());
+	}
+	
+	public ArrayList<Integer> getArray()
+	{
+		return arr1;
+	}
+	public void setLineLength(int length)
+	{
+		lineLength=length;
+	}
+
+	public void checkBackgroundOptions(String bgText) 
+	{
+		if(bgText.length()==6)
+		{
+			for(int i=0;i<6;i++)
+			{
+				if(bgText.charAt(i)!='0' &&
+					bgText.charAt(i)!='1' &&
+					bgText.charAt(i)!='2' &&
+					bgText.charAt(i)!='3' &&
+					bgText.charAt(i)!='4' &&
+					bgText.charAt(i)!='5' &&
+					bgText.charAt(i)!='6' &&
+					bgText.charAt(i)!='7' &&
+					bgText.charAt(i)!='8' &&
+					bgText.charAt(i)!='9' &&
+					bgText.charAt(i)!='a' &&
+					bgText.charAt(i)!='b' &&
+					bgText.charAt(i)!='c' &&
+					bgText.charAt(i)!='d' &&
+					bgText.charAt(i)!='e' &&
+					bgText.charAt(i)!='f' &&
+					bgText.charAt(i)!='A' &&
+					bgText.charAt(i)!='B' &&
+					bgText.charAt(i)!='C' &&
+					bgText.charAt(i)!='D' &&
+					bgText.charAt(i)!='E' &&
+					bgText.charAt(i)!='F')
+				{
+					bgWarning=true;
+				}
+				else
+				{
+					bgWarning=false;
+				}
+			}
+		}
+		else
+		{
+			bgWarning=true;
+		}
+	}
+
+	public boolean isBackgroundWarnings() 
+	{
+		return bgWarning;
+	}
+
+	public void checkFractalOptions(String fractText) 
+	{
+		if(fractText.length()==6)
+		{
+			for(int i=0;i<6;i++)
+			{
+				if(fractText.charAt(i)!='0' &&
+					fractText.charAt(i)!='1' &&
+					fractText.charAt(i)!='2' &&
+					fractText.charAt(i)!='3' &&
+					fractText.charAt(i)!='4' &&
+					fractText.charAt(i)!='5' &&
+					fractText.charAt(i)!='6' &&
+					fractText.charAt(i)!='7' &&
+					fractText.charAt(i)!='8' &&
+					fractText.charAt(i)!='9' &&
+					fractText.charAt(i)!='a' &&
+					fractText.charAt(i)!='b' &&
+					fractText.charAt(i)!='c' &&
+					fractText.charAt(i)!='d' &&
+					fractText.charAt(i)!='e' &&
+					fractText.charAt(i)!='f' &&
+					fractText.charAt(i)!='A' &&
+					fractText.charAt(i)!='B' &&
+					fractText.charAt(i)!='C' &&
+					fractText.charAt(i)!='D' &&
+					fractText.charAt(i)!='E' &&
+					fractText.charAt(i)!='F')
+				{
+					fractWarning=true;
+				}
+				else
+				{
+					fractWarning=false;
+				}
+			}
+		}
+		else
+		{
+			fractWarning=true;
+		}
+	}
+
+	public boolean isFractalWarnings() 
+	{
+		return fractWarning;
+	}
+
+	public void checkLineLengthOptions(String lineNumber) 
+	{
+		if(lineNumber.length()<4)
+		{
+			for(int i=0;i<lineNumber.length();i++)
+			{
+				if(lineNumber.charAt(i)!='0' &&
+					lineNumber.charAt(i)!='1' &&
+					lineNumber.charAt(i)!='2' &&
+					lineNumber.charAt(i)!='3' &&
+					lineNumber.charAt(i)!='4' &&
+					lineNumber.charAt(i)!='5' &&
+					lineNumber.charAt(i)!='6' &&
+					lineNumber.charAt(i)!='7' &&
+					lineNumber.charAt(i)!='8' &&
+					lineNumber.charAt(i)!='9')
+				{
+					lineWarning=true;
+				}
+				else
+				{
+					lineWarning=false;
+					lineLength=Integer.parseInt(lineNumber);
+				}
+			}
+		}
+		else
+		{
+			lineWarning=true;
+		}
+	}
+
+	public boolean isLineLengthWarnings() 
+	{
+		return lineWarning;
+	}
+
+	public void resetWarnings() 
+	{
+		bgWarning=false;
+		fractWarning=false;
+		lineWarning=false;
+	}
+
+	public void setupArray() 
+	{
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		arr1=new ArrayList<Integer>();
+		arr1.add(screenSize.width/2);
+		arr1.add(screenSize.height/2);
+		arr1.add(arr1.get(0)+lineLength);
+		arr1.add(arr1.get(1));		
+	}
+
+	
+}

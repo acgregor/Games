@@ -1,0 +1,44 @@
+package contents;
+
+import java.awt.Button;
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class FractalView
+{
+	private Button next;
+	private JFrame frame1,frame2,frame3;
+	FractalView()
+	{
+		frame1=new JFrame("Dragon Curve Settings");
+		frame1.setSize(500, 500);
+		JPanel panel1=new JPanel();
+		panel1.setBackground(Color.blue);
+		panel1.setLayout(new GridLayout(5,3));
+		next=new Button("Next");
+		panel1.add(next);
+		frame1.add(panel1);
+		frame1.setVisible(true);
+	}
+
+	public void addButtonListener(ActionListener al)
+	{
+		next.addActionListener(al);
+	}
+	public void setNextFrame()
+	{
+		if(frame1.isEnabled())
+		{
+			frame2=new JFrame("NextFrame");
+			frame2.setSize(100, 100);
+			frame2.setVisible(true);
+			frame1.setVisible(false);
+		}
+		
+		
+	}
+}

@@ -1,0 +1,75 @@
+package contents;
+
+import java.awt.CardLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+public class View extends JFrame
+{
+	private Model model;
+	
+	private JComboBox b;
+	private String[] bOptions;
+	private JTextField t=new JTextField();
+	private JTextField test=new JTextField();
+	private CardLayout cl;
+	private JPanel sub2;
+	public View(Model m)
+	{
+		super("MVC test");
+		model=m;
+		JPanel main=new JPanel(new GridLayout(8,1));
+		JPanel panel=new JPanel(new GridLayout(1,2));
+		cl=new CardLayout();
+		sub2=new JPanel(cl);
+		JPanel ss1=new JPanel(new GridLayout(1,1));
+		JPanel ss2=new JPanel(new GridLayout(1,1));
+		
+		bOptions=new String[]{"Black","White","Custom"};
+		b=new JComboBox(bOptions);
+		b.setFont(new Font("Arial", Font.PLAIN, 30));
+		t.setFont(new Font("Arial", Font.PLAIN, 30));
+		ss2.add(t);
+		sub2.add(ss1,"1");
+		sub2.add(ss2,"2");
+		cl.show(sub2,"1");
+		
+		panel.add(b);
+		panel.add(sub2);
+		main.add(panel);
+		main.add(test);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setSize(600, 600);
+		this.add(main);
+		
+	}
+	public CardLayout getCardLayout()
+	{
+		return cl;
+	}
+	public JPanel getCardPanel()
+	{
+		return sub2;
+	}
+	public void addL(ActionListener al)
+	{
+		b.addActionListener(al);
+	}
+	
+	public int getNumber()
+	{
+		return Integer.parseInt(t.getText());
+	}
+	
+	public void setNumber(int number)
+	{
+		t.setText(number+"");
+	}
+}

@@ -1,0 +1,499 @@
+package contents;
+
+import java.awt.Button;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.Timer;
+
+/**
+ * 
+ * @author Austen Gregor
+ * 
+ * Created 08/17/2015
+ */
+
+public class FractalView
+{
+	private JFrame settings,instructions,instructions2;
+	
+	private JPanel settingsPane;
+	private JPanel bgOuterPane,bgCardPane,bgSubPane1,bgSubPane2;
+	private JPanel fractOuterPane,fractCardPane,fractSubPane1,fractSubPane2;
+	private JPanel lineOuterPane,lineInnerPane1,lineInnerPane2;
+	
+	private GUIPanel drawing;
+	
+	private CardLayout bgCardLayout,fractCardLayout;
+
+	private JLabel bgLabel;
+	private JLabel fractLabel;
+	private JLabel lineLengthLabel1,lineLengthLabel2,lineLengthLabel3;
+	private JLabel timerDelayLabel1, timerDelayLabel2;
+	
+	private Button next1;
+	
+	private JComboBox bgOptions, fractOptions, timerOptions;
+	
+	private JTextField bgTextField,fractTextField,lineTextField;
+	
+	private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	private int width=screenSize.width;
+	private int height=screenSize.height;
+	
+	private static ArrayList<Integer> fractArray;
+	private Color bgColor;
+
+	private static Color fractColor;
+	
+	private static Color[] fractRainbow;
+	
+	private Font font=new Font("Arial", Font.PLAIN, 30);
+	
+	private static boolean isTimerDelay;
+	private static boolean isRainbow;
+	
+	private static int x=0;
+	FractalView()
+	{
+		
+		
+		//Create the first frame and call it settings
+		settings=new JFrame("Dragon Curve Settings");
+		
+		//Create the settings panel to hold all features
+		settingsPane=new JPanel(new GridLayout(0,1));
+		settingsPane.setBackground(Color.LIGHT_GRAY);
+		
+		//create a label asking the user to choose a background color for the fractal drawing
+		bgLabel=new JLabel("Choose a background color");
+		bgLabel.setFont(font);
+		
+		//add the label to the panel
+		settingsPane.add(bgLabel);
+		
+		//create another panel to hold the user's options
+		bgOuterPane=new JPanel(new GridLayout(1,2));
+		
+		//create a drop-down box for users to choose a background color
+		String [] bgString=new String[]{"Black","White","Custom"};
+		bgOptions=new JComboBox(bgString);
+		bgOptions.setFont(font);
+		
+		//initialize color to match initial settings
+		bgColor=Color.BLACK;
+		
+		//add the drop-down box to the panel
+		bgOuterPane.add(bgOptions);
+		
+		//create a cardpanel to show a textfield if the user chooses 'Custom' from the drop-down menu
+		bgCardLayout=new CardLayout();
+		bgCardPane=new JPanel(bgCardLayout);
+		
+		//bgSubPane1 is a blank panel
+		bgSubPane1=new JPanel();
+		bgSubPane1.setBackground(Color.LIGHT_GRAY);
+		
+		//bgSubPane2 is a panel that holds a textfield for the user to input his/her own custom color value for the background
+		bgSubPane2=new JPanel(new GridLayout(1,1));
+		bgTextField=new JTextField("000000");
+		bgTextField.setFont(font);
+		bgSubPane2.add(bgTextField);
+		
+		//add both the blank panel and textfield to the cardpanel
+		bgCardPane.add(bgSubPane1,"1");
+		bgCardPane.add(bgSubPane2,"2");
+		bgCardLayout.show(bgCardPane, "1");
+		
+		//add the cardpanel to the outer panel
+		bgOuterPane.add(bgCardPane);
+		
+		//finally add the outer panel to the setting panel of the main frame
+		settingsPane.add(bgOuterPane);
+		
+		//create a fractal label asking the user to choose a design color
+		fractLabel=new JLabel("Choose a fractal color");
+		fractLabel.setFont(font);
+		
+		//add the fractal label to the main panel
+		settingsPane.add(fractLabel);
+		
+		//create another panel to hold the user's fractal color options
+		fractOuterPane=new JPanel(new GridLayout(1,2));
+		
+		//create a drop-down menu for the user's fractal color options
+		String [] fractString=new String[]{"Red","Orange","Yellow","Green","Blue","Purple","Rainbow","Custom"};
+		fractOptions=new JComboBox(fractString);
+		fractOptions.setFont(font);
+		
+		//initialize colors to match initial settings
+		fractColor=Color.RED;
+		isRainbow=false;
+		
+		//add the drop-down menu to the outer fractal panel 
+		fractOuterPane.add(fractOptions);
+		
+		//create a cardpanel like that of the background card panel
+		fractCardLayout=new CardLayout();
+		fractCardPane=new JPanel(fractCardLayout);
+		
+		//this is a blank panel
+		fractSubPane1=new JPanel();
+		fractSubPane1.setBackground(Color.LIGHT_GRAY);
+		
+		//this is a textfield that appears if the user chooses 'Custom' from the drop-down menu
+		fractSubPane2=new JPanel(new GridLayout(1,1));
+		fractTextField=new JTextField("ffffff");
+		fractTextField.setFont(font);
+		fractSubPane2.add(fractTextField);
+		
+		//adds both the blank panel and the textfield to the cardpanel
+		fractCardPane.add(fractSubPane1,"1");
+		fractCardPane.add(fractSubPane2,"2");
+		fractCardLayout.show(fractCardPane, "1");
+		
+		//add the cardpanel to the outer panel
+		fractOuterPane.add(fractCardPane);
+		
+		//add the outer panel to the main settings panel
+		settingsPane.add(fractOuterPane);
+		
+		//create a line length label that briefly explains how the design is made and what to input
+		lineLengthLabel1=new JLabel("The fractal is made with lines.");
+		lineLengthLabel2=new JLabel("Smaller lenghts will appear more 'filled in'.");
+		lineLengthLabel3=new JLabel("Choose a line length integer of '1' or higher.");
+		lineLengthLabel1.setFont(font);
+		lineLengthLabel2.setFont(font);
+		lineLengthLabel3.setFont(font);
+		
+		//add the label to the main settings panel
+		settingsPane.add(lineLengthLabel1);
+		settingsPane.add(lineLengthLabel2);
+		settingsPane.add(lineLengthLabel3);
+		
+		//to keep the same format as the above panels an outer line panel is created
+		lineOuterPane=new JPanel(new GridLayout(1,2));
+		
+		//creates a text field for user's to input a line length
+		lineInnerPane1=new JPanel(new GridLayout(1,1));
+		lineTextField=new JTextField("1");
+		lineTextField.setFont(font);
+		lineInnerPane1.add(lineTextField);
+		
+		//this is a blank panel
+		lineInnerPane2=new JPanel();
+		lineInnerPane2.setBackground(Color.LIGHT_GRAY);
+		
+		//add both features to the outer panel
+		lineOuterPane.add(lineInnerPane1);
+		lineOuterPane.add(lineInnerPane2);
+		
+		//add the outer panel to the main settings panel
+		settingsPane.add(lineOuterPane);
+		
+		//add timer delay label to explain what it does
+		timerDelayLabel1=new JLabel("Having a delay will show the drawing animation.");
+		
+		//add this label to ask the user if he/she wants the delay to happen
+		timerDelayLabel2=new JLabel("Do you want to see the fractal drawn in real time?");
+		
+		//create timer delay options of yes or no
+		String[] timerOptionString=new String[] {"NO","YES"};
+		timerOptions=new JComboBox(timerOptionString);
+		timerOptions.setFont(font);
+		
+		//initialize option to be NO
+		isTimerDelay=false;
+		
+		//add timerOptions comboBox to the main settings panel
+		settingsPane.add(timerOptions);
+		
+		
+		
+		
+		//create a next button to check the user's settings and continue to the next frame
+		next1=new Button("Next");
+		
+		//adds the button to the settings panel
+		settingsPane.add(next1);
+		
+		//the main frame now adds the complete settings panel
+		settings.add(settingsPane);
+		settings.pack();
+		settings.setVisible(true);
+		settings.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
+	}
+
+	//methods that the controller uses to help add functionality to the background options
+	public CardLayout getBG_Layout()
+	{
+		return bgCardLayout;
+	}
+	public JPanel getBG_CardPanel()
+	{
+		return bgCardPane;
+	}
+	public void addBG_Listener(ActionListener al)
+	{
+		bgOptions.addActionListener(al);
+	}
+	
+	//methods that the controller uses to help add functionality to the fractal options
+	public CardLayout getFract_Layout()
+	{
+		return fractCardLayout;
+	}
+	public JPanel getFract_CardPanel()
+	{
+		return fractCardPane;
+	}
+	public void addFract_Listener(ActionListener al)
+	{
+		fractOptions.addActionListener(al);
+	}
+	
+	//getter and setter methods for background options
+	public String getBG_Text()
+	{
+		return bgTextField.getText();
+	}
+	public Color getBG_Color()
+	{
+		return bgColor;
+	}
+	public void setBG_Color(String s)
+	{
+		int r,g,b;
+		r=Integer.decode("0x"+s.charAt(0)+""+s.charAt(1));
+		g=Integer.decode("0x"+s.charAt(2)+""+s.charAt(3));
+		b=Integer.decode("0x"+s.charAt(4)+""+s.charAt(5));
+		
+		bgColor=new Color(r,g,b);
+	}
+	
+	//getter and setter methods for fractal options
+	public String getFract_Text()
+	{
+		return fractTextField.getText();
+	}
+	public Color getFract_Color()
+	{
+		return fractColor;
+	}
+	public void setFract_Color(String s)
+	{
+		int r,g,b;
+		r=Integer.decode("0x"+s.charAt(0)+""+s.charAt(1));
+		g=Integer.decode("0x"+s.charAt(2)+""+s.charAt(3));
+		b=Integer.decode("0x"+s.charAt(4)+""+s.charAt(5));
+		fractColor=new Color(r,g,b);
+	}
+	
+	//getter methods for line length options
+	public String getLineLengthText()
+	{
+		return lineTextField.getText();
+	}
+	
+	//methods that help the controller add functionality to the timer delay options
+	public void addTimerDelay_Listener(ActionListener al)
+	{
+		timerOptions.addActionListener(al);
+	}
+	public void setTimerDelayOption(boolean b)
+	{
+		isTimerDelay=b;
+	}
+	
+	//methods that display warnings if the user does not correctly fill out the settings frame
+	public void displayBGWarning() 
+	{
+		JOptionPane.showMessageDialog(null,"Please input a 6 character long string of an RGB value for the custom background color. (E.G. '00CCFF')");
+	}
+	public void displayFractWarning() 
+	{
+		JOptionPane.showMessageDialog(null,"Please input a 6 character long string of an RGB value for the custom background color. (E.G. '00CCFF')");
+	}
+	public void displayLineWarning() 
+	{
+		JOptionPane.showMessageDialog(null,"Please input an integer of '1' or higher. (E.G. '3')");
+	}
+	
+	//adds an action listener to the next button
+	public void addNextButtonListener(ActionListener al)
+	{
+		next1.addActionListener(al);
+	}
+
+	//creates the graphics panel for drawing the fractal
+	public void createDrawingPanel()
+	{
+		instructions=new JFrame("Drawing");
+		instructions.setSize(width, height);
+		drawing=new GUIPanel(getBG_Color(),getFract_Color());
+		instructions.add(drawing);
+		drawing.requestFocus();
+		instructions.setVisible(true);
+		settings.setVisible(false);
+	}
+	
+	//add a window listener to the canvas to help close the window while graphics are still working
+	public void addDrawingWindowListener(WindowListener wl)
+	{
+		instructions.addWindowListener(wl);
+	}
+	//sets the fractal array so the paint method has all the points to draw from
+	public void setFractArray(ArrayList<Integer> arr)
+	{
+		fractArray=arr;
+	}
+	
+	
+	
+	
+	//class that creates a custom panel with graphics
+	static class GUIPanel extends JPanel implements ActionListener
+	{
+		private Color bg,fract;
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		BufferedImage buffer;
+		Timer t=new Timer(0, this);
+		int index;
+		private GUIPanel(Color bgColor, Color fractColor)
+		{
+			index=0;
+			bg=bgColor;
+			fract=fractColor;
+			this.setBackground(bgColor);
+			buffer = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_INT_ARGB);
+			
+		}
+		
+		@Override
+		public void paint(Graphics g)
+		{
+			super.paint(g);
+			g.setColor(fract);
+			
+			if(isTimerDelay)
+			{
+				t.start();
+				g.drawImage(buffer, 0, 0, this);
+			}
+			else
+			{
+				if(isRainbow)
+				{
+					for(int i=0;i<fractArray.size()-2;i+=2)
+					{
+						g.setColor(fractRainbow[x]);
+						g.drawLine(fractArray.get(i), fractArray.get(i+1), fractArray.get(i+2), fractArray.get(i+3));
+						//g.drawLine(c2.get(i), c2.get(i+1), c2.get(i+2), c2.get(i+3));
+						//g.setColor(spectrum[359-x]);
+						//g.drawLine(c3.get(i), c3.get(i+1), c3.get(i+2), c3.get(i+3));
+						//g.drawLine(c4.get(i), c4.get(i+1), c4.get(i+2), c4.get(i+3));
+						
+						//4 is a color modifier to make it more or less random 
+						//add a setting for the user to change this later
+						if(x<359 && i%4==0)
+						{
+							x++;
+						}
+						else if(x>=359)
+						{
+							x=0;
+						}
+					}
+				}
+				else
+				{
+					for(int i=0;i<fractArray.size()-2;i+=2)
+					{
+						
+						g.drawLine(fractArray.get(i), fractArray.get(i+1), fractArray.get(i+2), fractArray.get(i+3));
+					}
+				}
+			}
+			
+		}
+		@Override
+		public void actionPerformed(ActionEvent e) 
+		{
+			nextLine(buffer.getGraphics());
+		}
+
+		private void nextLine(Graphics g) 
+		{
+			if(index<fractArray.size()-2)
+			{
+				if(isRainbow)
+				{
+					g.setColor(fractRainbow[x]);
+					g.drawLine(fractArray.get(index), fractArray.get(index+1), fractArray.get(index+2), fractArray.get(index+3));
+					if(x<359 && index%4==0)
+					{
+						x++;
+					}
+					else if(x>=359)
+					{
+						x=0;
+					}
+					
+				}
+				g.setColor(fractColor);
+				g.drawLine(fractArray.get(index), fractArray.get(index+1), fractArray.get(index+2), fractArray.get(index+3));
+				index+=2;
+				repaint();
+			}
+			else
+			{
+				t.stop();
+				index=0;
+			}
+		}
+	}
+
+	public GUIPanel getDrawingPanel() 
+	{
+		return drawing;
+	}
+	public JFrame getDrawingFrame()
+	{
+		return instructions;
+	}
+
+	public void disposeDrawing() 
+	{
+		instructions.dispose();
+		settings.setVisible(true);
+	}
+
+	public void setFractColorArray(Color[] rainbow) 
+	{
+		fractRainbow=rainbow;
+	}
+
+	public void setRainbowBool(boolean b) 
+	{
+		isRainbow=b;
+	}
+	
+}

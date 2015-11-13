@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;contents.Application&apos; to &apos;FractalApplication&apos;&#x0D;&#x0A;- Original project: &apos;FractalApplet&apos;&#x0D;&#x0A;- Original element: &apos;contents.Application&apos;&#x0D;&#x0A;- Renamed element: &apos;contents.FractalApplication&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;Application&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;contents{Application.java[Application" matchStrategy="1" name="FractalApplication" qualified="false" references="true" similarDeclarations="false" stamp="1435729533212" textual="false" version="1.0"/>
+</session>

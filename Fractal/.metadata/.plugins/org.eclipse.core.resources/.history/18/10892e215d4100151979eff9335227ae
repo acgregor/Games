@@ -1,0 +1,26 @@
+package contents;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class FractalController
+{
+	private FractalModel model;
+	private FractalView view;
+	public FractalController(FractalModel m, FractalView v)
+	{
+		model=m;
+		view=v;
+		view.addButtonListener((ActionListener)new ButtonListener());
+	}
+	class ButtonListener implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent e) 
+		{
+			view.setNextFrame();
+			System.out.println(e.getSource().toString());
+		}
+		
+	}
+}

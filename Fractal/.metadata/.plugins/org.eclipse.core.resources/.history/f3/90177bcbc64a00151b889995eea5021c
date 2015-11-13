@@ -1,0 +1,241 @@
+package contents;
+
+import java.awt.CardLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+
+public class FractalController
+{
+	private FractalModel model;
+	private FractalView view;
+	private boolean customBG;
+	private boolean customFract1;
+	private boolean next2Continues,next3Continues;
+	
+	public FractalController(FractalModel m, FractalView v)
+	{
+		model=m;
+		view=v;
+		
+		//first frame listeners and variables
+		customBG=false;
+		view.addBG_Color_Listener((ActionListener)new bgColorOptionListener());
+		view.addFractNumberListener(new fractNumberListener());
+		view.addNext1ButtonListener(new next1Listener());
+		
+		customFract1=false;
+		next2Continues=false;
+		next3Continues=false;
+		
+	}
+	class bgColorOptionListener implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent e) 
+		{
+			if(((JComboBox)e.getSource()).getSelectedItem()=="Custom")
+			{
+				view.getBG_Layout().show(view.getBG_CardPanel(), "2");
+				customBG=true;
+			}
+			else
+			{
+				view.getBG_Layout().show(view.getBG_CardPanel(), "1");
+				customBG=false;
+				if(((JComboBox)e.getSource()).getSelectedItem()=="Black")
+				{
+					view.setBG_Color("000000");
+				}
+				else if(((JComboBox)e.getSource()).getSelectedItem()=="White")
+				{
+					view.setBG_Color("ffffff");
+				}
+			}
+			
+		}
+	}
+	class fractNumberListener implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent e) 
+		{
+			if(((JComboBox)e.getSource()).getSelectedItem()=="1")
+			{
+				next2Continues=false;
+				next3Continues=false;
+			}				
+			else if(((JComboBox)e.getSource()).getSelectedItem()=="2")
+			{
+				next2Continues=true;
+				next3Continues=false;
+			}	
+			else if(((JComboBox)e.getSource()).getSelectedItem()=="3")
+			{
+				next2Continues=true;
+				next3Continues=true;
+			}
+		}		
+	}
+	class next1Listener implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent e) 
+		{
+			if(customBG)
+			{
+				model.checkBackgroundOptions(view.getBG_Text());
+				
+				if(model.isBackgroundWarnings())
+				{
+					view.displayBGWarning();
+				}
+				else
+				{
+					view.setBG_Color(view.getBG_Text());
+				}
+			}
+			
+			model.checkLineLengthOptions(view.getLineLengthText());
+			if(model.isLineLengthWarnings())
+			{
+				view.displayLineWarning();
+			}
+			else
+			{
+				model.setLineLength(Integer.parseInt(view.getLineLengthText()));
+			}
+			
+			if(!model.isBackgroundWarnings() && !model.isLineLengthWarnings())
+			{
+				view.createFractalSettings1();
+				view.addFract_Color_Listener1(new fract1ColorOptionListener());
+				view.addBack2Listener(new back2Listener());
+				view.addNext2Listener(new next2Listener());
+			}
+			else
+			{
+				model.resetWarnings();
+			}
+		}
+	}
+
+	class fract1ColorOptionListener implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent e) 
+		{
+			if(((JComboBox)e.getSource()).getSelectedItem()=="Custom")
+			{
+				view.getFract_Layout1().show(view.getFract_CardPanel1(), "2");
+				customFract1=true;
+			}
+			else
+			{
+				view.getFract_Layout1().show(view.getFract_CardPanel1(), "1");
+				customFract1=false;
+				if(((JComboBox)e.getSource()).getSelectedItem()=="Red")
+				{
+					view.setFract1_Color("ff0000");
+				}
+				else if(((JComboBox)e.getSource()).getSelectedItem()=="Orange")
+				{
+					view.setFract1_Color("ff7700");
+				}
+				else if(((JComboBox)e.getSource()).getSelectedItem()=="Yellow")
+				{
+					view.setFract1_Color("ffff00");
+				}
+				else if(((JComboBox)e.getSource()).getSelectedItem()=="Green")
+				{
+					view.setFract1_Color("00ff00");
+				}
+				else if(((JComboBox)e.getSource()).getSelectedItem()=="Blue")
+				{
+					view.setFract1_Color("0000ff");
+				}
+				else if(((JComboBox)e.getSource()).getSelectedItem()=="Purple")
+				{
+					view.setFract1_Color("ff00ff");
+				}
+				else if(((JComboBox)e.getSource()).getSelectedItem()=="White")
+				{
+					view.setFract1_Color("ffffff");
+				}
+				else if(((JComboBox)e.getSource()).getSelectedItem()=="Rainbow")
+				{					
+					//fix
+					
+					//model.createRainbow();
+					//view.setFractColorArray(model.getRainbow());
+					//view.setRainbowBool(true);
+				}
+			}
+			
+		}
+	}
+	
+	class back2Listener implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent e) 
+		{
+			view.disposeFract1();
+		}
+	}
+	
+	class next2Listener implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent e) 
+		{
+			if(next2Continues)
+			{
+				view.createFractalSettings2();
+			}
+			else
+			{
+				model.setupArray();
+				model.CalculateArray();
+				view.setFractArray1(model.getArray());
+				view.createDrawingPanel();
+			}
+		}
+	}
+	
+	class WindowListener implements java.awt.event.WindowListener
+	{
+
+		@Override
+		public void windowActivated(WindowEvent e) {}
+
+		@Override
+		public void windowClosed(WindowEvent e) {}
+
+		@Override
+		public void windowClosing(WindowEvent e) 
+		{
+			view.disposeDrawing();
+		}
+
+		@Override
+		public void windowDeactivated(WindowEvent e) {}
+
+		@Override
+		public void windowDeiconified(WindowEvent e) {}
+
+		@Override
+		public void windowIconified(WindowEvent e) {}
+
+		@Override
+		public void windowOpened(WindowEvent e) {}
+		
+	}
+}

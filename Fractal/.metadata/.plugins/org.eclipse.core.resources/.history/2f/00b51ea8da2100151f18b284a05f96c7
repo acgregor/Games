@@ -1,0 +1,254 @@
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+
+public class DragonCurve extends JPanel implements KeyListener
+{
+	private static final long serialVersionUID = 1L;
+	static ArrayList<Integer> c1,c2,c3,c4;
+	static int length=5;
+	static int iteration=0;
+	static int width,height;
+	static int colorChange=4;
+	int pivotX1,pivotY1;
+	Color[] spectrum;
+	public DragonCurve()
+	{
+		setBackground(Color.BLACK);
+		addKeyListener(this);
+		setFocusable(true);
+		spectrum=new Color[360];
+		for(int i=0;i<60;i++)
+		{
+			spectrum[i]=new Color((float)1.0,(float)(i/60.0),(float)0.0);
+		}
+		for(int i=0;i<60;i++)
+		{
+			spectrum[i+60]=new Color((float)((60-i)/60.0),(float)1.0,(float)0.0);
+		}
+		for(int i=0;i<60;i++)
+		{
+			spectrum[i+120]=new Color((float)0.0,(float)1.0,(float)(i/60.0));
+		}
+		for(int i=0;i<60;i++)
+		{
+			spectrum[i+180]=new Color((float)0.0,(float)((60-i)/60.0),(float)1.0);
+		}
+		for(int i=0;i<60;i++)
+		{
+			spectrum[i+240]=new Color((float)(i/60.0),(float)0.0,(float)1.0);
+		}
+		for(int i=0;i<60;i++)
+		{
+			spectrum[i+300]=new Color((float)1.0,(float)0.0,(float)((60-i)/60.0));
+		}
+	}
+	public void addNotify()
+	{
+        super.addNotify();
+        requestFocus();
+	}
+	public void paint(Graphics g)
+	{
+		super.paint(g);
+		int x=0;
+		for(int i=0;i<c1.size()-2;i+=2)
+		{
+			g.setColor(spectrum[x]);
+			g.drawLine(c1.get(i), c1.get(i+1), c1.get(i+2), c1.get(i+3));
+			g.drawLine(c2.get(i), c2.get(i+1), c2.get(i+2), c2.get(i+3));
+			g.setColor(spectrum[359-x]);
+			g.drawLine(c3.get(i), c3.get(i+1), c3.get(i+2), c3.get(i+3));
+			g.drawLine(c4.get(i), c4.get(i+1), c4.get(i+2), c4.get(i+3));
+			if(x<359 && i%colorChange==0)
+			{
+				x++;
+			}
+			else if(x>=359)
+			{
+				x=0;
+			}
+		}
+		
+	}
+	
+	public static void main(String[] args)
+	{
+		JFrame frame=new JFrame("Dragon Curve");
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		width = (int) screenSize.getWidth();
+		height = (int) screenSize.getHeight();
+		frame.setSize(width,height);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+		frame.add(new DragonCurve());
+		
+		c1=new ArrayList<Integer>();
+		c1.add(width/2);
+		c1.add(height/2);
+		c1.add(c1.get(0)+length);
+		c1.add(c1.get(1));
+		
+		c2=new ArrayList<Integer>();
+		c2.add(width/2);
+		c2.add(height/2);
+		c2.add(c2.get(0)-length);
+		c2.add(c2.get(1));
+		
+		c3=new ArrayList<Integer>();
+		c3.add(width/2);
+		c3.add(height/2);
+		c3.add(c3.get(0));
+		c3.add(c3.get(1)+length);
+		
+		c4=new ArrayList<Integer>();
+		c4.add(width/2);
+		c4.add(height/2);
+		c4.add(c4.get(0));
+		c4.add(c4.get(1)-length);
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e)
+	{
+		if(e.getKeyCode()==e.VK_LEFT && colorChange>2)
+		{
+			colorChange/=2;
+			repaint();
+		}
+		if(e.getKeyCode()==e.VK_RIGHT && colorChange<=2048)
+		{
+			colorChange*=2;
+			repaint();
+		}
+		if(e.getKeyCode()==e.VK_R || e.getKeyCode()==e.VK_UP || e.getKeyCode()==e.VK_DOWN)
+		{
+			if(e.getKeyCode()==e.VK_UP)
+			{
+				length++;
+			}
+			else if(e.getKeyCode()==e.VK_DOWN && length>1)
+			{
+				length--;
+			}
+			
+			c1=new ArrayList<Integer>();
+			c1.add(width/2);
+			c1.add(height/2);
+			c1.add(c1.get(0)+length);
+			c1.add(c1.get(1));
+			
+			c2=new ArrayList<Integer>();
+			c2.add(width/2);
+			c2.add(height/2);
+			c2.add(c2.get(0)-length);
+			c2.add(c2.get(1));
+			
+			c3=new ArrayList<Integer>();
+			c3.add(width/2);
+			c3.add(height/2);
+			c3.add(c3.get(0));
+			c3.add(c3.get(1)+length);
+			
+			c4=new ArrayList<Integer>();
+			c4.add(width/2);
+			c4.add(height/2);
+			c4.add(c4.get(0));
+			c4.add(c4.get(1)-length);
+			
+			iteration=0;
+			repaint();	
+		}
+		if(e.getKeyCode()==e.VK_SPACE && iteration<20)
+		{
+			int size=c1.size();
+			pivotX1=c1.get(c1.size()-2);
+			pivotY1=c1.get(c1.size()-1);
+			for(int i=size-3;i>=0;i-=2)
+			{
+				int y1=c1.get(i);
+				int x1=c1.get(i-1);
+				x1=x1-pivotX1;
+				y1=y1-pivotY1;
+				int temp=x1;
+				x1=y1;
+				y1=-temp;
+				x1=x1+pivotX1;
+				y1=y1+pivotY1;
+				c1.add(x1);
+				c1.add(y1);
+			}
+			pivotX1=c2.get(c2.size()-2);
+			pivotY1=c2.get(c2.size()-1);
+			for(int i=size-3;i>=0;i-=2)
+			{
+				int y1=c2.get(i);
+				int x1=c2.get(i-1);
+				x1=x1-pivotX1;
+				y1=y1-pivotY1;
+				int temp=x1;
+				x1=y1;
+				y1=-temp;
+				x1=x1+pivotX1;
+				y1=y1+pivotY1;
+				c2.add(x1);
+				c2.add(y1);
+			}
+			pivotX1=c3.get(c3.size()-2);
+			pivotY1=c3.get(c3.size()-1);
+			for(int i=size-3;i>=0;i-=2)
+			{
+				int y1=c3.get(i);
+				int x1=c3.get(i-1);
+				x1=x1-pivotX1;
+				y1=y1-pivotY1;
+				int temp=x1;
+				x1=y1;
+				y1=-temp;
+				x1=x1+pivotX1;
+				y1=y1+pivotY1;
+				c3.add(x1);
+				c3.add(y1);
+			}
+			pivotX1=c4.get(c4.size()-2);
+			pivotY1=c4.get(c4.size()-1);
+			for(int i=size-3;i>=0;i-=2)
+			{
+				int y1=c4.get(i);
+				int x1=c4.get(i-1);
+				x1=x1-pivotX1;
+				y1=y1-pivotY1;
+				int temp=x1;
+				x1=y1;
+				y1=-temp;
+				x1=x1+pivotX1;
+				y1=y1+pivotY1;
+				c4.add(x1);
+				c4.add(y1);
+			}
+			repaint();
+			iteration++;
+		}		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

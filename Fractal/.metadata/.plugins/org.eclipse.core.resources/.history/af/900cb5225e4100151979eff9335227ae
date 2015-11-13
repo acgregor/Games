@@ -1,0 +1,80 @@
+package contents;
+
+import java.awt.Button;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+public class FractalView
+{
+	private Button next1;
+	private JLabel bgLabel, fracLabel, lineLabel;
+	private JFrame settings,intructions,instructions2,drawing;
+	private JPanel settingsPane,bgCardPane,bgSubPane1,bgSubPane2;
+	private JComboBox bgOptions;
+	private JTextField bgTextField;
+	private CardLayout bgLayout;
+	FractalView()
+	{
+		settings=new JFrame("Dragon Curve Settings");
+		
+		settingsPane=new JPanel(new GridLayout(2,2));
+		settingsPane.setBackground(Color.GRAY);
+		
+		bgLayout=new CardLayout();
+		bgCardPane=new JPanel(bgLayout);
+		
+		bgSubPane1=new JPanel(new GridLayout(1,2));
+		String [] bgString=new String[]{"Black","White","Custom"};
+		bgOptions=new JComboBox(bgString);
+		bgOptions.setFont(new Font("Arial", Font.PLAIN, 30));
+		bgSubPane1.add(bgOptions);
+		bgTextField=new JTextField();
+		bgSubPane1.add(bgTextField);
+		
+		bgSubPane2=new JPanel(new GridLayout(1,2));
+		bgSubPane2.add(bgOptions);
+		bgSubPane2.add(bgTextField);
+		bgCardPane.add(bgSubPane1,"1");
+		bgCardPane.add(bgSubPane2,"2");
+		bgLayout.show(bgCardPane, "1");
+		
+		bgLabel=new JLabel("Choose a background color");
+		
+		fracLabel=new JLabel("Choose a fractal color");
+		
+		lineLabel=new JLabel("The fractal is made with lines."
+				+ "  Smaller lenghts will appear more 'filled in'."
+				+ " Choose a line length integer of '1' or higher.");
+		
+		next1=new Button("Next");
+		
+		settingsPane.add(bgLabel);
+		settingsPane.add(bgCardPane);
+		
+		settings.add(settingsPane);
+		settings.pack();
+		settings.setVisible(true);
+	}
+
+	public CardLayout getBG_Layout()
+	{
+		return bgLayout;
+	}
+	public JPanel getBG_Panel()
+	{
+		return bgCardPane;
+	}
+	public void addBG_listener(ActionListener al)
+	{
+		bgOptions.addActionListener(al);
+	}
+}
